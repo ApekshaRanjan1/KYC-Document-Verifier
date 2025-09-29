@@ -1,6 +1,5 @@
-train: ./dataset/train
-val: ./dataset/val
-
+train: C:/Users/apeks/OneDrive/Desktop/Apeksha Desktop/College/SBI-Internship/KYC/dataset/train
+val: C:/Users/apeks/OneDrive/Desktop/Apeksha Desktop/College/SBI-Internship/KYC/dataset/val
 names:
   0: pan
   1: aadhar
