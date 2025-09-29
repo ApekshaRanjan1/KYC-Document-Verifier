@@ -36,7 +36,7 @@ model = YOLO("yolov8n-cls.pt")   # classification backbone
 # -------------------------------
 model.train(
     data=DATA_DIR,                 # dataset root (train/val inside)
-    epochs=30,
+    epochs=4,
     imgsz=224,
     batch=32,
     name="pan_aadhar_classifier"
