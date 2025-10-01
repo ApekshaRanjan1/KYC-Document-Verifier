@@ -6,6 +6,7 @@ import pytesseract
 from fuzzywuzzy import fuzz
 
 # Set the path to the Tesseract executable (change this path based on your Tesseract installation)
+#Sets the system path for the Tesseract executable so pytesseract can run OCR.
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 from flask import Flask, request, redirect, session, render_template, jsonify, send_file, send_from_directory
