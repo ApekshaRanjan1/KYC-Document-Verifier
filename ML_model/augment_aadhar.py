@@ -1,76 +1,57 @@
+# augment_aadhaar.py
 import os
 import cv2
-import numpy as np
+import numpy as np   # ✅ needed for noise
 import random
-from tqdm import tqdm
+from PIL import Image, ImageEnhance, ImageFilter
 
-# Paths
-DATASET_DIR = "dataset"
-AADHAAR_DIR = os.path.join(DATASET_DIR, "aadhaar")
-PAN_DIR = os.path.join(DATASET_DIR, "pan")
+dataset_path = "dataset/aadhaar"          
+augmented_path = "augmented_dataset/aadhaar"  
+os.makedirs(augmented_path, exist_ok=True)
 
-# Output dir for augmented Aadhaar
-AUG_DIR = os.path.join(DATASET_DIR, "aadhaar_augmented")
-os.makedirs(AUG_DIR, exist_ok=True)
+# how many new augmented versions per Aadhaar image
+N_AUGMENTS = 2  
 
-# Count current files
-aadhaar_count = len(os.listdir(AADHAAR_DIR))
-pan_count = len(os.listdir(PAN_DIR))
+def augment_image(img):
+    """Apply a random augmentation to the given PIL image"""
+    choice = random.choice(["blur", "noise", "contrast", "rotate"])
+    if choice == "blur":
+        return img.filter(ImageFilter.GaussianBlur(radius=2))
+    elif choice == "noise":
+        cv_img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        noise = (np.random.randn(*cv_img.shape) * 25).astype("uint8")
+        cv_img = cv2.add(cv_img, noise)
+        return Image.fromarray(cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB))
+    elif choice == "contrast":
+        return ImageEnhance.Contrast(img).enhance(random.uniform(0.5, 1.5))
+    elif choice == "rotate":
+        return img.rotate(random.choice([5, -5, 10, -10]))
+    return img
 
-print(f"📊 Aadhaar: {aadhaar_count}, PAN: {pan_count}")
+print("📂 Starting Aadhaar augmentation...")
 
-# Number of extra Aadhaar images needed to match PAN
-extra_needed = max(0, pan_count - aadhaar_count)
-print(f"✅ Will generate {extra_needed} augmented Aadhaar images")
+# count total files for progress tracking
+all_files = [f for f in os.listdir(dataset_path) if os.path.isfile(os.path.join(dataset_path, f))]
+total_files = len(all_files)
 
-if extra_needed == 0:
-    print("⚠️ Aadhaar already balanced or more than PAN. Nothing to do.")
-    exit()
+count = 0
+for idx, filename in enumerate(all_files, start=1):
+    filepath = os.path.join(dataset_path, filename)
+    try:
+        img = Image.open(filepath)
 
-# Augmentation functions
-def augment(img):
-    aug_list = []
-    
-    # Blur
-    aug_list.append(cv2.GaussianBlur(img, (5, 5), 0))
-    
-    # Noise
-    noise = np.random.randint(0, 50, img.shape, dtype="uint8")
-    aug_list.append(cv2.add(img, noise))
-    
-    # Brightness/Contrast
-    alpha = random.uniform(0.7, 1.3)
-    beta = random.randint(-30, 30)
-    aug_list.append(cv2.convertScaleAbs(img, alpha=alpha, beta=beta))
-    
-    # Rotation
-    (h, w) = img.shape[:2]
-    M = cv2.getRotationMatrix2D((w//2, h//2), random.randint(-5, 5), 1.0)
-    aug_list.append(cv2.warpAffine(img, M, (w, h)))
-    
-    return aug_list
+        for i in range(N_AUGMENTS):
+            aug_img = augment_image(img)
+            save_name = f"{os.path.splitext(filename)[0]}_aug{i}.png"
+            save_path = os.path.join(augmented_path, save_name)
+            aug_img.save(save_path)
+            count += 1
 
-# Create augmented images
-all_files = os.listdir(AADHAAR_DIR)
-idx = 0
-pbar = tqdm(total=extra_needed, desc="Augmenting Aadhaar")
+        # ✅ show progress every 10 files
+        if idx % 10 == 0 or idx == total_files:
+            print(f"✅ Processed {idx}/{total_files} Aadhaar files...")
 
-while idx < extra_needed:
-    fname = random.choice(all_files)
-    path = os.path.join(AADHAAR_DIR, fname)
-    img = cv2.imread(path)
+    except Exception as e:
+        print(f"❌ Error processing {filename}: {e}")
 
-    if img is None:
-        continue
-
-    for aug_img in augment(img):
-        if idx >= extra_needed:
-            break
-        out_name = f"aug_{idx}_{fname}"
-        out_path = os.path.join(AUG_DIR, out_name)
-        cv2.imwrite(out_path, aug_img)
-        idx += 1
-        pbar.update(1)
-
-pbar.close()
-print("✅ Augmentation complete!")
+print(f"\n✅ Augmentation complete! Generated {count} new Aadhaar images in {augmented_path}")
