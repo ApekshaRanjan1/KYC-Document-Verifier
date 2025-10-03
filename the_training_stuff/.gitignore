@@ -1,0 +1,43 @@
+train
+val
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Data folders
+dataset/
+*.csv
+*.zip
+*.tar.gz
+*.h5
+*.pt
+*.pth
+
+# YOLO / Ultralytics outputs
+runs/
+weights/
+*.log
+
+# IDE / OS files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Any local config files containing secrets
+config.yaml
+
+uploads
