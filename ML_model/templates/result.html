@@ -4,11 +4,40 @@
   <meta charset="utf-8">
   <title>Prediction Result</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .uploaded-img {
+      max-width: 100%;
+      height: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    .prediction-box {
+      margin-top: 15px;
+      padding: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      background: #eef6ff;
+      border-left: 5px solid #007bff;
+      display: inline-block;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Prediction Result</h1>
-  <p><strong>Uploaded File:</strong> {{ filename }}</p>
-  <p><strong>Prediction:</strong> {{ prediction }}</p>
-  <a href="{{ url_for('index') }}">Try another</a>
+  <div class="container">
+    <h1>Prediction Result</h1>
+
+    <!-- Show uploaded image -->
+    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Document" class="uploaded-img">
+
+    <!-- Show prediction -->
+    <div class="prediction-box">
+      Predicted Document: {{ prediction }}
+    </div>
+
+    <br>
+    <a href="{{ url_for('index') }}" class="button">Upload Another</a>
+  </div>
 </body>
 </html>

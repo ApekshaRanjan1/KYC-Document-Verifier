@@ -2,14 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Document Classifier - Aadhaar vs PAN</title>
+  <title>KYC Document Classifier</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>
+    function previewFile(event) {
+      const preview = document.getElementById("preview");
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => { preview.src = reader.result; preview.style.display = "block"; };
+      if (file) reader.readAsDataURL(file);
+    }
+  </script>
 </head>
 <body>
-  <h1>Upload Document</h1>
-  <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" accept="image/*,.pdf" required>
-    <button type="submit">Predict</button>
-  </form>
+  <div class="container">
+    <h1>KYC Document Classifier</h1>
+    <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept="image/*" onchange="previewFile(event)" required>
+      <img id="preview" src="" alt="Preview" style="display:none; max-width:300px; margin-top:20px; border:1px solid #ccc; border-radius:8px;">
+      <br><br>
+      <button type="submit">Scan Document</button>
+    </form>
+  </div>
 </body>
 </html>
