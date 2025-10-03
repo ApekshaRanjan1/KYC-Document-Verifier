@@ -1,68 +1,53 @@
 import os
-import pickle
 import pytesseract
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import Pipeline
+from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+import pickle
 
-# -----------------------------
-# 1. Load Data (Images of Aadhaar & PAN)
-# -----------------------------
-# Suppose you have two folders:
-# dataset/
-#   aadhaar/
-#       img1.jpg, img2.jpg ...
-#   pan/
-#       img1.jpg, img2.jpg ...
+dataset_path = "dataset"
+texts = []
+labels = []
 
-DATASET_DIR = "dataset"
+count = 0
+total_files = sum(len(files) for _, _, files in os.walk(dataset_path))
 
-texts, labels = [], []
-
-for label_name in ["aadhaar", "pan"]:
-    folder = os.path.join(DATASET_DIR, label_name)
+for label in os.listdir(dataset_path):
+    folder = os.path.join(dataset_path, label)
+    if not os.path.isdir(folder):
+        continue
     for filename in os.listdir(folder):
-        if filename.lower().endswith((".png", ".jpg", ".jpeg")):
-            path = os.path.join(folder, filename)
-            text = pytesseract.image_to_string(Image.open(path))
+        filepath = os.path.join(folder, filename)
+        try:
+            text = pytesseract.image_to_string(Image.open(filepath))
             texts.append(text)
-            labels.append(label_name)
+            labels.append(label)
+        except Exception as e:
+            print(f"❌ Error reading {filepath}: {e}")
+        count += 1
+        if count % 10 == 0:
+            print(f"✅ Processed {count}/{total_files} files...")
 
-print(f"Loaded {len(texts)} samples.")
+print("🔹 Vectorizing...")
+vectorizer = TfidfVectorizer(max_features=5000)
+X = vectorizer.fit_transform(texts)
+y = labels
 
-# -----------------------------
-# 2. Split Data
-# -----------------------------
-X_train, X_test, y_train, y_test = train_test_split(texts, labels, test_size=0.2, random_state=42)
+print("🔹 Training model...")
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+clf = LinearSVC()
+clf.fit(X_train, y_train)
 
-# -----------------------------
-# 3. Build Pipeline (TF-IDF + LogisticRegression)
-# -----------------------------
-pipeline = Pipeline([
-    ("tfidf", TfidfVectorizer(stop_words="english")),
-    ("clf", LogisticRegression(max_iter=1000))
-])
-
-# -----------------------------
-# 4. Train Model
-# -----------------------------
-pipeline.fit(X_train, y_train)
-
-# -----------------------------
-# 5. Evaluate
-# -----------------------------
-y_pred = pipeline.predict(X_test)
+y_pred = clf.predict(X_test)
 print(classification_report(y_test, y_pred))
 
-# -----------------------------
-# 6. Save Model
-# -----------------------------
-MODEL_DIR = "model"
-os.makedirs(MODEL_DIR, exist_ok=True)
-with open(os.path.join(MODEL_DIR, "trained_model.pkl"), "wb") as f:
-    pickle.dump(pipeline, f)
+# Save model + vectorizer
+os.makedirs("model", exist_ok=True)
+with open("model/trained_model.pkl", "wb") as f:
+    pickle.dump(clf, f)
+with open("model/vectorizer.pkl", "wb") as f:
+    pickle.dump(vectorizer, f)
 
 print("✅ Model trained and saved at model/trained_model.pkl")

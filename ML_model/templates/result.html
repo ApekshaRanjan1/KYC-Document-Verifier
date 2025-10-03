@@ -1,43 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Prediction Result</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-    .uploaded-img {
-      max-width: 100%;
-      height: auto;
-      margin: 20px 0;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-    .prediction-box {
-      margin-top: 15px;
-      padding: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      background: #eef6ff;
-      border-left: 5px solid #007bff;
-      display: inline-block;
-      border-radius: 8px;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
     <h1>Prediction Result</h1>
-
-    <!-- Show uploaded image -->
-    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Document" class="uploaded-img">
-
-    <!-- Show prediction -->
-    <div class="prediction-box">
-      Predicted Document: {{ prediction }}
+    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Document" style="max-width:300px; margin:10px auto; border:1px solid #ccc;"/>
+    
+    <div class="result-box">
+      <p><strong>OCR + TF-IDF Model:</strong> {{ pred_text }}</p>
+      <p><strong>Image-based Model:</strong> {{ pred_img }}</p>
     </div>
 
-    <br>
-    <a href="{{ url_for('index') }}" class="button">Upload Another</a>
+    <a href="/">Go Back</a>
   </div>
 </body>
 </html>

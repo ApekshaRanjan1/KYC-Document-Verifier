@@ -2,43 +2,56 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import os
 import pickle
 from werkzeug.utils import secure_filename
-import cv2
-import numpy as np
 import pytesseract
 from PIL import Image
+import cv2
+import numpy as np
 
+# ----------------------------
+# Config
+# ----------------------------
 UPLOAD_FOLDER = "uploads"
 ALLOWED_EXT = {"png", "jpg", "jpeg"}
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Load ML model
-MODEL_PATH = os.path.join("model", "trained_model.pkl")
-with open(MODEL_PATH, "rb") as f:
-    model = pickle.load(f)
+# ----------------------------
+# Load Models
+# ----------------------------
+MODEL_DIR = "model"
 
-# Helper
+# OCR model
+with open(os.path.join(MODEL_DIR, "ocr_model.pkl"), "rb") as f:
+    vectorizer, clf_text = pickle.load(f)
+
+# Image model
+with open(os.path.join(MODEL_DIR, "img_model.pkl"), "rb") as f:
+    clf_img = pickle.load(f)
+
+# ----------------------------
+# Helpers
+# ----------------------------
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
 
-# Preprocessing for ML model (image-based)
-def preprocess(filepath):
+def preprocess_text(filepath):
+    text = pytesseract.image_to_string(Image.open(filepath))
+    text = text.strip().lower()
+    if not text:
+        text = "empty"
+    return vectorizer.transform([text])
+
+def preprocess_image(filepath):
     img = cv2.imread(filepath)
-    img = cv2.resize(img, (128, 128))    # must match training size
-    img = img.flatten().reshape(1, -1)   # flatten to vector
+    img = cv2.resize(img, (128, 128))
+    img = img.flatten().reshape(1, -1)
     return img
 
-# OCR keyword-based fallback
-def ocr_check(filepath):
-    text = pytesseract.image_to_string(Image.open(filepath)).lower()
-    if "income tax department" in text or "permanent account number" in text:
-        return "pan"
-    elif "aadhaar" in text:
-        return "aadhaar"
-    return None
-
+# ----------------------------
 # Routes
+# ----------------------------
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -57,23 +70,29 @@ def predict():
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
 
-        # ML model prediction
-        features = preprocess(filepath)
-        prediction = model.predict(features)[0]
+        # OCR-based prediction
+        features_text = preprocess_text(filepath)
+        pred_text = clf_text.predict(features_text)[0]
 
-        # Cross-check with OCR
-        ocr_result = ocr_check(filepath)
-        if ocr_result:
-            prediction = ocr_result
+        # Image-based prediction
+        features_img = preprocess_image(filepath)
+        pred_img = clf_img.predict(features_img)[0]
 
-        return render_template("result.html", filename=filename, prediction=prediction)
+        return render_template(
+            "result.html",
+            filename=filename,
+            pred_text=pred_text,
+            pred_img=pred_img
+        )
 
     return redirect(url_for("index"))
 
-# Serve uploaded files
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+# ----------------------------
+# Run
+# ----------------------------
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
