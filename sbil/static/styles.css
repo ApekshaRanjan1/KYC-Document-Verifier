@@ -2,8 +2,8 @@
 :root {
   --bg: #0f1724;
   --card: #0b1220;
-  --accent: #4f46e5;
-  --muted: #94a3b8;
+  --accent: #9a50da;
+  --muted: #c098da;
   --surface: #0b1220;
   --glass: rgba(255,255,255,0.03);
 }
@@ -24,7 +24,7 @@ body {
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   border-radius: 12px;
   padding: 28px;
-  box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+  box-shadow: 0 10px 30px rgba(212, 0, 250, 0.7);
   border: 1px solid rgba(255,255,255,0.03);
 }
 

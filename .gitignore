@@ -39,3 +39,5 @@ Thumbs.db
 
 # Any local config files containing secrets
 config.yaml
+
+uploads

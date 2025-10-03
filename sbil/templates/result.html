@@ -17,6 +17,23 @@
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.2);
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      cursor: pointer; /* makes it obvious it's clickable */
+    }
+    #processedPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    #processedPopup img {
+      max-width: 90%; max-height: 90%;
+      border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    #closePopup {
+      position: absolute; top: 20px; right: 30px; 
+      font-size: 24px; color: white; cursor: pointer;
     }
   </style>
 </head>
@@ -28,8 +45,14 @@
       <!-- Left side: Uploaded Image -->
       <div class="card">
         <h2>Uploaded Image</h2>
-        <img src="{{ url_for('uploaded_file', filename=result.filename) }}" 
+        <img id="uploadedImg" src="{{ url_for('uploaded_file', filename=result.filename) }}" 
              alt="Uploaded Document" class="uploaded-img">
+      </div>
+      
+      <!-- Processed Popup -->
+      <div id="processedPopup">
+        <span id="closePopup">&times;</span>
+        <img src="{{ url_for('uploaded_file', filename=result.processed_filename) }}">
       </div>
 
       <!-- Right side: Extracted Text + Detection -->
@@ -74,5 +97,28 @@
 
     <a class="btn back" href="{{ url_for('upload_and_scan') }}">Scan another</a>
   </div>
+
+  <script>
+    const uploadedImg = document.getElementById('uploadedImg');
+    const popup = document.getElementById('processedPopup');
+    const closeBtn = document.getElementById('closePopup');
+
+    // Click on image to show processed popup
+    uploadedImg.addEventListener('click', () => {
+      popup.style.display = 'flex';
+    });
+
+    // Close popup when clicking close button
+    closeBtn.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+
+    // Close popup if clicked outside the image
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
