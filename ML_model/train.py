@@ -4,7 +4,7 @@ from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
 import pickle
 
 dataset_path = "dataset"
@@ -43,11 +43,13 @@ clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
 print(classification_report(y_test, y_pred))
 
-# Save model + vectorizer
-os.makedirs("model", exist_ok=True)
-with open("model/trained_model.pkl", "wb") as f:
-    pickle.dump(clf, f)
-with open("model/vectorizer.pkl", "wb") as f:
-    pickle.dump(vectorizer, f)
+# Show overall accuracy
+acc = accuracy_score(y_test, y_pred)
+print(f"✅ Accuracy: {acc*100:.2f}%")
 
-print("✅ Model trained and saved at model/trained_model.pkl")
+# Save model + vectorizer together
+os.makedirs("model", exist_ok=True)
+with open("model/ocr_model.pkl", "wb") as f:
+    pickle.dump((vectorizer, clf), f)
+
+print("✅ Model trained and saved at model/ocr_model.pkl")
