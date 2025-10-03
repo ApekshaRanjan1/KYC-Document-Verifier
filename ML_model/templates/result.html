@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Prediction Result</title>
+  <title>OCR Result</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <div class="container">
     <h1>Prediction Result</h1>
-    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Document" style="max-width:300px; margin:10px auto; border:1px solid #ccc;"/>
-    
-    <div class="result-box">
-      <p><strong>OCR + TF-IDF Model:</strong> {{ pred_text }}</p>
-      <p><strong>Image-based Model:</strong> {{ pred_img }}</p>
+
+    <div class="result-card">
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="preview">
+      <p><strong>Prediction:</strong> {{ prediction }}</p>
     </div>
 
-    <a href="/">Go Back</a>
+    <a href="{{ url_for('index') }}" class="btn">Upload Another</a>
   </div>
 </body>
 </html>

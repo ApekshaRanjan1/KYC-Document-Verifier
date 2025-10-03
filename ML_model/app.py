@@ -4,8 +4,6 @@ import pickle
 from werkzeug.utils import secure_filename
 import pytesseract
 from PIL import Image
-import cv2
-import numpy as np
 
 # ----------------------------
 # Config
@@ -18,17 +16,12 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ----------------------------
-# Load Models
+# Load OCR + TF-IDF Model
 # ----------------------------
 MODEL_DIR = "model"
 
-# OCR model
 with open(os.path.join(MODEL_DIR, "ocr_model.pkl"), "rb") as f:
     vectorizer, clf_text = pickle.load(f)
-
-# Image model
-with open(os.path.join(MODEL_DIR, "img_model.pkl"), "rb") as f:
-    clf_img = pickle.load(f)
 
 # ----------------------------
 # Helpers
@@ -37,17 +30,12 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
 
 def preprocess_text(filepath):
+    # Extract text from image using OCR
     text = pytesseract.image_to_string(Image.open(filepath))
     text = text.strip().lower()
     if not text:
         text = "empty"
     return vectorizer.transform([text])
-
-def preprocess_image(filepath):
-    img = cv2.imread(filepath)
-    img = cv2.resize(img, (128, 128))
-    img = img.flatten().reshape(1, -1)
-    return img
 
 # ----------------------------
 # Routes
@@ -70,19 +58,14 @@ def predict():
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
 
-        # OCR-based prediction
+        # OCR + TF-IDF based prediction
         features_text = preprocess_text(filepath)
-        pred_text = clf_text.predict(features_text)[0]
-
-        # Image-based prediction
-        features_img = preprocess_image(filepath)
-        pred_img = clf_img.predict(features_img)[0]
+        prediction = clf_text.predict(features_text)[0]
 
         return render_template(
             "result.html",
             filename=filename,
-            pred_text=pred_text,
-            pred_img=pred_img
+            prediction=prediction
         )
 
     return redirect(url_for("index"))
