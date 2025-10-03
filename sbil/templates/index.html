@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Document OCR — PAN/Aadhaar Detector</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    .preview {
+      margin-top: 16px;
+      display: none;
+      text-align: center;
+    }
+    .preview img {
+      max-width: 350px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload Image for OCR</h1>
+    <p class="subtitle">Detect PAN (e.g. BBOYU1576R) or Aadhaar (1234 1234 1234)</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}
+            <div>{{ m }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data">
+      <label class="file-label">
+        <input type="file" name="image" id="fileInput" accept="image/*" required>
+        <span>Choose image</span>
+      </label>
+      <button class="btn" type="submit">Upload & Scan</button>
+    </form>
+
+    <!-- Preview section -->
+    <div class="preview" id="previewBox">
+      <h3>Selected Image Preview:</h3>
+      <img id="previewImg" src="" alt="Preview will appear here">
+    </div>
+
+    <footer>
+      <small>Tip: Clear, high-resolution images give better OCR accuracy.</small>
+    </footer>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const previewBox = document.getElementById('previewBox');
+    const previewImg = document.getElementById('previewImg');
+
+    fileInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewImg.src = e.target.result;
+          previewBox.style.display = "block";
+        }
+        reader.readAsDataURL(file);
+      } else {
+        previewBox.style.display = "none";
+        previewImg.src = "";
+      }
+    });
+  </script>
+</body>
+</html>
