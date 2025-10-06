@@ -10,18 +10,24 @@
     .info-box {
       margin-top: 20px; display: inline-block; text-align: left;
       background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #ddd;
+      max-width: 600px; word-wrap: break-word;
     }
     a {
       display: inline-block; margin-top: 20px;
       text-decoration: none; color: #007bff; font-weight: 500;
     }
+    pre { background: #f0f0f0; padding: 10px; border-radius: 8px; white-space: pre-wrap; text-align: left; }
   </style>
 </head>
 <body>
   <h1>Prediction Result</h1>
+
+  <!-- Uploaded image preview -->
   <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image">
+
   <div class="info-box">
     <p><strong>Detected Type:</strong> {{ prediction }}</p>
+
     {% if extracted_data %}
       <h3>Extracted Details:</h3>
       <ul>
@@ -30,9 +36,11 @@
         {% endfor %}
       </ul>
     {% endif %}
+
     <h3>Extracted Raw Text:</h3>
     <pre>{{ extracted_text }}</pre>
   </div>
+
   <a href="{{ url_for('index') }}">← Back to Upload</a>
 </body>
 </html>

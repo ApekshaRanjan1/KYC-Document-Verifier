@@ -1,6 +1,5 @@
 # regex_ex.py
 import cv2
-import numpy as np
 import pytesseract
 import re
 from PIL import Image
@@ -22,7 +21,7 @@ AADHAAR_REGEX = r"\b\d{4}\s\d{4}\s\d{4}\b"
 def preprocess_image(image_path):
     img = cv2.imread(image_path)
     if img is None:
-        raise FileNotFoundError(f"Could not load image from path: {image_path}")
+        raise FileNotFoundError(f"Could not load image: {image_path}")
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -31,39 +30,47 @@ def preprocess_image(image_path):
 
 
 # ----------------------------
-# Main Extraction Function
+# Extraction Function
 # ----------------------------
 def extract_details(image_path, extracted_text, predicted_label):
-    """
-    Extract PAN or Aadhaar details from image + OCR text.
-    Uses regex patterns to find key identifiers.
-    """
+    """Extract Aadhaar/PAN info using OCR + regex, supporting English + Hindi."""
     processed = preprocess_image(image_path)
-    custom_config = r'--oem 3 --psm 6'
-    text_from_image = pytesseract.image_to_string(processed, lang="eng+hin", config=custom_config)
+    config = r"--oem 3 --psm 6 -l eng+hin"
 
-    # If OCR fails, fallback to grayscale
+    # Extract text
+    text_from_image = pytesseract.image_to_string(processed, config=config)
     if not text_from_image.strip():
         gray = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-        text_from_image = pytesseract.image_to_string(gray, lang="eng+hin", config=custom_config)
+        text_from_image = pytesseract.image_to_string(gray, config=config)
 
-    # Combine text from ML OCR + image OCR
+    # Merge OCRs
     full_text = f"{extracted_text}\n{text_from_image}"
 
-    # Apply regex
-    pan_matches = re.findall(PAN_REGEX, full_text)
-    aadhaar_matches = re.findall(AADHAAR_REGEX, full_text)
+    # Clean text (remove weird characters)
+    clean_text = re.sub(r"[^A-Za-z0-9\s\u0900-\u097F]", " ", full_text)
 
-    # Filter based on document prediction
-    if "Aadhaar" in predicted_label:
+    # Detect document type via keywords
+    doc_type = "Unknown"
+    if re.search(r"आधार|aadhaar|uidai", clean_text, re.I):
+        doc_type = "Aadhaar Card"
+    elif re.search(r"pan|income|tax", clean_text, re.I):
+        doc_type = "PAN Card"
+
+    # Apply regex
+    pan_matches = re.findall(PAN_REGEX, clean_text)
+    aadhaar_matches = re.findall(AADHAAR_REGEX, clean_text)
+
+    # Final filter
+    if "Aadhaar" in predicted_label or doc_type == "Aadhaar Card":
         filtered = aadhaar_matches
-    elif "PAN" in predicted_label:
+    elif "PAN" in predicted_label or doc_type == "PAN Card":
         filtered = pan_matches
     else:
         filtered = []
 
     return {
-        "raw_text": full_text.strip(),
+        "document_type": doc_type,
+        "raw_text": clean_text.strip(),
         "pan_matches": pan_matches,
         "aadhaar_matches": aadhaar_matches,
         "filtered_matches": filtered

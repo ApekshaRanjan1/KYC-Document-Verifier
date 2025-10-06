@@ -40,13 +40,13 @@ def index():
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(filepath)
 
-            # 🔹 Run ML model
+            # Run ML model
             prediction, extracted_text = predict_document_type(filepath)
 
-            # 🔹 Run regex extraction (only needs image path + label)
-            extracted_data = extract_details(filepath, prediction)
+            # Run regex extraction (image path + extracted text + label)
+            extracted_data = extract_details(filepath, extracted_text, prediction)
 
-            # 🔹 Pass everything to result page
+            # Render result page
             return render_template(
                 "result.html",
                 filename=filename,
