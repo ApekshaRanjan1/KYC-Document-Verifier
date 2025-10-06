@@ -2,31 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>🧾 KYC Result</title>
+  <title>💫 KYC Result</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <div class="container">
     <h1 class="page-title">💫 Prediction Result</h1>
 
+    <!-- Uploaded Image -->
     <div class="result-image-container">
-      <img src="{{ url_for('uploaded_file', filename=filename) }}" class="result-image" alt="Uploaded Image">
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" class="result-image" alt="Uploaded Document">
     </div>
 
+    <!-- Structured Details -->
     <div class="info-box">
-      <p><strong>Detected Type:</strong> {{ prediction }}</p>
-
-      {% if extracted_data %}
-      <h3>Extracted Details:</h3>
+      <h3>🧾 Extracted Details</h3>
       <ul>
-        {% for key, value in extracted_data.items() %}
-          <li><strong>{{ key }}:</strong> {{ value }}</li>
-        {% endfor %}
+        {% if extracted_data.document_type %}
+        <li><strong>Document Type:</strong> {{ extracted_data.document_type }}</li>
+        {% endif %}
+        {% if extracted_data.status %}
+        <li><strong>Status:</strong> {{ extracted_data.status }}</li>
+        {% endif %}
+        {% if extracted_data.name %}
+        <li><strong>Name:</strong> {{ extracted_data.name }}</li>
+        {% endif %}
+        {% if extracted_data.aadhaar_number %}
+        <li><strong>Aadhaar Number:</strong> {{ extracted_data.aadhaar_number }}</li>
+        {% endif %}
+        {% if extracted_data.document_number %}
+        <li><strong>Document Number:</strong> {{ extracted_data.document_number }}</li>
+        {% endif %}
       </ul>
-      {% endif %}
 
-      <h3>Extracted Raw Text:</h3>
-      <pre>{{ extracted_text }}</pre>
+      <!-- Optional Raw Text -->
+      {% if extracted_text %}
+      <details style="margin-top:15px;">
+        <summary>📄 Show Raw OCR Text</summary>
+        <pre>{{ extracted_text }}</pre>
+      </details>
+      {% endif %}
     </div>
 
     <a href="{{ url_for('index') }}" class="back-btn">← Back to Upload</a>
