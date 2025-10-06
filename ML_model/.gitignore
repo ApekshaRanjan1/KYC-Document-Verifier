@@ -30,7 +30,7 @@ dataset
 
 augmented_dataset
 
-model/ocr_model.pkl
+model/ocr_cache.pkl
 
 check.py
 

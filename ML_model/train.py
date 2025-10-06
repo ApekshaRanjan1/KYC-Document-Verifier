@@ -17,11 +17,10 @@ import re
 BASE_DIR = r"C:\Users\apeks\OneDrive\Desktop\Apeksha Desktop\College\SBI-Internship\KYC\ML_model"
 
 dataset_path = os.path.join(BASE_DIR, "dataset")                 # contains aadhaar/ and pan/
-augmented_path = os.path.join(BASE_DIR, "augmented_dataset")     # contains augmented aadhaar/ and pan/
+augmented_path = os.path.join(BASE_DIR, "augmented_dataset")     # contains augmented aadhaar/
 ocr_cache_file = os.path.join(BASE_DIR, "model", "ocr_cache.json")
 MODEL_OUT = os.path.join(BASE_DIR, "model", "ocr_model.pkl")
 
-# TF-IDF limit for speed/size
 TFIDF_MAX_FEATURES = 3000
 
 # ----------------------------
@@ -36,6 +35,7 @@ def clean_text_for_vectorizer(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text if text else "empty"
 
+
 def load_ocr_cache(path):
     if os.path.exists(path):
         try:
@@ -45,10 +45,12 @@ def load_ocr_cache(path):
             return {}
     return {}
 
+
 def save_ocr_cache(path, cache):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(cache, f, ensure_ascii=False)
+
 
 def ocr_text_from_file(filepath, cache, new_count):
     """Return OCR text; use cache if available, otherwise run pytesseract and store."""
@@ -64,8 +66,9 @@ def ocr_text_from_file(filepath, cache, new_count):
         text = ""
     return text, new_count
 
+
 def gather_image_files():
-    """Return [(filepath, label)] for PAN + Aadhaar (original + augmented)."""
+    """Return [(filepath, label)] for PAN + Aadhaar (original + augmented Aadhaar only)."""
     items = []
 
     # PAN (original)
@@ -82,21 +85,22 @@ def gather_image_files():
             if fname.lower().endswith((".png", ".jpg", ".jpeg")):
                 items.append((os.path.join(aadhaar_folder, fname), "aadhaar"))
 
-    # Augmented Aadhaar
+    # Augmented Aadhaar (✅ keep)
     aug_aadhaar_folder = os.path.join(augmented_path, "aadhaar")
     if os.path.isdir(aug_aadhaar_folder):
         for fname in os.listdir(aug_aadhaar_folder):
             if fname.lower().endswith((".png", ".jpg", ".jpeg")):
                 items.append((os.path.join(aug_aadhaar_folder, fname), "aadhaar"))
 
-    # Augmented PAN
-    aug_pan_folder = os.path.join(augmented_path, "pan")
-    if os.path.isdir(aug_pan_folder):
-        for fname in os.listdir(aug_pan_folder):
-            if fname.lower().endswith((".png", ".jpg", ".jpeg")):
-                items.append((os.path.join(aug_pan_folder, fname), "pan"))
+    # Augmented PAN ❌ (skip this block)
+    # aug_pan_folder = os.path.join(augmented_path, "pan")
+    # if os.path.isdir(aug_pan_folder):
+    #     for fname in os.listdir(aug_pan_folder):
+    #         if fname.lower().endswith((".png", ".jpg", ".jpeg")):
+    #             items.append((os.path.join(aug_pan_folder, fname), "pan"))
 
     return items
+
 
 # ----------------------------
 # MAIN
@@ -152,7 +156,7 @@ def main():
     X = vectorizer.fit_transform(texts)
     y = labels
 
-    print("🔹 Training model (LinearSVC)...")
+    print("🔹 Training model (LinearSVC, class_weight=balanced)...")
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
@@ -178,6 +182,7 @@ def main():
     elapsed = time.time() - start_time
     print(f"\n✅ Model trained and saved at {MODEL_OUT}")
     print(f"⏱️ Total time: {elapsed:.1f}s")
+
 
 # ----------------------------
 if __name__ == "__main__":

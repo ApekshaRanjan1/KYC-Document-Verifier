@@ -62,10 +62,17 @@ def predict():
         features_text = preprocess_text(filepath)
         prediction = clf_text.predict(features_text)[0]
 
+        # 🪄 Map internal labels to readable names
+        label_map = {
+            "aadhaar": "Aadhaar Card",
+            "pan": "PAN Card"
+        }
+        display_prediction = label_map.get(prediction.lower(), prediction)
+
         return render_template(
             "result.html",
             filename=filename,
-            prediction=prediction
+            prediction=display_prediction  # ✅ readable output
         )
 
     return redirect(url_for("index"))
