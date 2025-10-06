@@ -1,68 +1,84 @@
-# qr_extraction.py — Correct debug folder placement (outside static)
+# qr_extraction.py
 
 import cv2
-import os
+import numpy as np
+from pyzbar.pyzbar import decode
+from PIL import Image
 
 def extract_qr_from_image(input_path, output_path):
     """
-    Detect QR in Aadhaar image with enhanced preprocessing.
-    Returns True if QR detected and cropped, else False.
+    Robust Aadhaar QR extractor.
+    Uses preprocessing + multiple detection methods.
+    Returns True if QR found and saved.
     """
-
     img = cv2.imread(input_path)
     if img is None:
-        print("❌ Could not read input image:", input_path)
+        print("❌ Could not read input image")
         return False
 
-    qr_detector = cv2.QRCodeDetector()
-
-    # ✅ Keep all debug stuff OUTSIDE /static/
-    debug_dir = os.path.join("output", "debug")
-    os.makedirs(debug_dir, exist_ok=True)
-
-    cv2.imwrite(os.path.join(debug_dir, "original.jpg"), img)
-
-    preprocess_variants = []
+    # -------------------------
+    # Step 1: Preprocess for better visibility
+    # -------------------------
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    preprocess_variants.append(("gray", gray))
 
-    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8)).apply(gray)
-    preprocess_variants.append(("clahe", clahe))
+    # Improve contrast using CLAHE
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    gray = clahe.apply(gray)
 
-    blur = cv2.GaussianBlur(gray, (3, 3), 0)
-    thresh = cv2.adaptiveThreshold(
-        blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
-        cv2.THRESH_BINARY, 15, 10
-    )
-    preprocess_variants.append(("adaptive_thresh", thresh))
+    # Slight blur reduction & denoising
+    gray = cv2.fastNlMeansDenoising(gray, None, 15, 7, 21)
 
-    _, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    preprocess_variants.append(("otsu", otsu))
+    # Resize (upscale small images)
+    h, w = gray.shape
+    if w < 1000:
+        scale = 2
+        gray = cv2.resize(gray, (w * scale, h * scale), interpolation=cv2.INTER_CUBIC)
+        img = cv2.resize(img, (w * scale, h * scale), interpolation=cv2.INTER_CUBIC)
 
-    edges = cv2.Canny(gray, 100, 200)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    dilated = cv2.dilate(edges, kernel, iterations=1)
-    preprocess_variants.append(("dilated_edges", dilated))
-
-    for name, variant in preprocess_variants:
-        data, points, _ = qr_detector.detectAndDecode(variant)
-        cv2.imwrite(os.path.join(debug_dir, f"{name}.jpg"), variant)
-
-        if points is not None and len(points) > 0:
-            points = points.astype(int).reshape(-1, 2)
-            cv2.polylines(img, [points], True, (0, 255, 0), 2)
-            x, y, w, h = cv2.boundingRect(points)
-            pad = 10
-            x_min, y_min = max(0, x - pad), max(0, y - pad)
-            x_max, y_max = min(img.shape[1], x + w + pad), min(img.shape[0], y + h + pad)
-
-            qr_crop = img[y_min:y_max, x_min:x_max]
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    # -------------------------
+    # Step 2: Try pyzbar (most reliable)
+    # -------------------------
+    decoded = decode(Image.fromarray(gray))
+    if decoded:
+        for obj in decoded:
+            (x, y, w, h) = obj.rect
+            qr_crop = img[y:y + h, x:x + w]
             cv2.imwrite(output_path, qr_crop)
-
-            print(f"✅ QR detected using {name} preprocessing → {output_path}")
-            print(f"🔍 Decoded data preview: {data[:80] if data else 'N/A'}")
+            print("✅ QR detected via pyzbar")
             return True
 
-    print("❌ No QR detected in any preprocessing stage. Try clearer or closer image.")
+    # -------------------------
+    # Step 3: Try OpenCV QRCodeDetector
+    # -------------------------
+    detector = cv2.QRCodeDetector()
+    data, points, _ = detector.detectAndDecode(gray)
+    if points is not None:
+        pts = points[0] if isinstance(points, (list, tuple)) or points.shape[0] == 1 else points
+        xs, ys = pts[:, 0], pts[:, 1]
+        x_min, x_max = int(xs.min()), int(xs.max())
+        y_min, y_max = int(ys.min()), int(ys.max())
+        pad = 12
+        h, w = img.shape[:2]
+        x_min, y_min = max(0, x_min - pad), max(0, y_min - pad)
+        x_max, y_max = min(w, x_max + pad), min(h, y_max + pad)
+        qr_crop = img[y_min:y_max, x_min:x_max]
+        cv2.imwrite(output_path, qr_crop)
+        print("✅ QR detected via OpenCV")
+        return True
+
+    # -------------------------
+    # Step 4: Try edge/contour fallback (for faint QRs)
+    # -------------------------
+    edged = cv2.Canny(gray, 100, 200)
+    contours, _ = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    possible_qr = [cv2.boundingRect(c) for c in contours if 100 < cv2.contourArea(c) < 50000]
+    if possible_qr:
+        # Pick the largest square-ish contour
+        x, y, w, h = sorted(possible_qr, key=lambda r: r[2]*r[3], reverse=True)[0]
+        qr_crop = img[y:y + h, x:x + w]
+        cv2.imwrite(output_path, qr_crop)
+        print("⚠️  QR approximated via contour fallback")
+        return True
+
+    print("❌ No QR detected by any method")
     return False

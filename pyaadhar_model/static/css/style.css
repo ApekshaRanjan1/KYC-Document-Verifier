@@ -1,78 +1,101 @@
 body {
-  font-family: "Poppins", sans-serif;
-  background: #f7f8fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f0f4ff, #e1e9ff);
   color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding-top: 50px;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
+  margin: 50px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+  padding: 30px;
   text-align: center;
 }
 
 h1 {
   margin-bottom: 20px;
-  color: #007bff;
+  color: #0056d6;
 }
 
-form {
-  margin-bottom: 20px;
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
 input[type="file"] {
-  margin: 10px 0;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  width: 100%;
 }
 
 button {
-  background: #007bff;
+  background-color: #0056d6;
   color: white;
+  padding: 10px 20px;
   border: none;
-  padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 15px;
-  transition: background 0.3s;
+  transition: 0.3s;
 }
 
 button:hover {
-  background: #0056b3;
+  background-color: #003f9e;
 }
 
-.upload-again {
-  background: #28a745;
+#previewContainer {
+  margin-top: 20px;
+}
+
+#previewImage {
+  max-width: 100%;
+  border-radius: 8px;
   margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.upload-again:hover {
-  background: #218838;
+.message {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 6px;
 }
 
 .message.error {
-  background: #ffe6e6;
-  color: #d9534f;
-  padding: 10px;
-  border-radius: 6px;
-  margin-top: 15px;
+  background-color: #ffe5e5;
+  color: #d60000;
 }
 
 .result {
-  text-align: left;
-  background: #f1f9ff;
+  background: #f7faff;
+  border: 1px solid #d0e0ff;
+  border-radius: 10px;
+  margin-top: 20px;
   padding: 15px;
-  border-radius: 8px;
+  text-align: left;
+  word-wrap: break-word;
 }
 
 pre {
   white-space: pre-wrap;
-  word-wrap: break-word;
-  font-size: 13px;
+  word-break: break-word;
+}
+
+.loader {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #0056d6;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
 }

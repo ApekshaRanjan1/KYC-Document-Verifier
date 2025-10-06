@@ -14,24 +14,35 @@
     <form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
       <label for="file">Upload Aadhaar Image:</label>
       <input type="file" name="file" id="file" accept=".jpg, .jpeg, .png" required>
-      <button type="submit">Upload & Verify</button>
+      <button type="submit" id="uploadBtn">Upload & Verify</button>
     </form>
 
+    <!-- Image preview -->
     <div id="previewContainer">
       <img id="previewImage" src="#" alt="Preview" style="display:none;">
     </div>
 
+    <!-- Loader -->
+    <div id="loader" class="loader" style="display:none;">Scanning QR...</div>
+
+    <!-- Error message -->
     {% if error %}
       <div class="message error">{{ error }}</div>
     {% endif %}
 
+    <!-- Valid decoded result -->
     {% if result %}
       <div class="result">
-        <h2>Decoded Aadhaar Details:</h2>
+        <h2>✅ Decoded Aadhaar Details:</h2>
         <pre>{{ result }}</pre>
-        <form action="/" method="get">
-          <button type="submit" class="upload-again">Upload Another</button>
-        </form>
+      </div>
+    {% endif %}
+
+    <!-- Raw fallback text -->
+    {% if raw_qr %}
+      <div class="result">
+        <h2>⚠️ Raw QR Text (not fully decoded):</h2>
+        <pre>{{ raw_qr }}</pre>
       </div>
     {% endif %}
   </div>
