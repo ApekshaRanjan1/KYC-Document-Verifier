@@ -8,7 +8,7 @@
 <body>
   <h1 class="page-title">💫 Upload Your Aadhaar or PAN Card</h1>
 
-  <form class="upload-form" action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
+  <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
     <div class="drop-zone" id="dropZone">
       <p>📁 Drag & drop your document or click to upload</p>
       <input type="file" name="file" id="fileInput" accept="image/*" style="display:none" required>
@@ -16,6 +16,12 @@
 
     <img id="previewImage" class="preview hidden" alt="🖼️ Image Preview">
     <button type="submit" id="scanBtn">🔍 Scan Document</button>
+
+    <div id="resultBox" class="result-box hidden fade-in">
+      <h3>🧾 Detected:</h3>
+      <p id="resultText"><strong>—</strong></p>
+      <a id="detailsBtn" href="#" class="details-btn hidden">📋 Show Details</a>
+    </div>
   </form>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
