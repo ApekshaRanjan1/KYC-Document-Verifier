@@ -12,12 +12,14 @@ from collections import Counter
 import re
 
 # ----------------------------
-# CONFIG
+# CONFIG (absolute paths)
 # ----------------------------
-dataset_path = "dataset"                # original dataset root (contains aadhaar/ and pan/)
-augmented_path = "augmented_dataset"    # contains augmented aadhaar/ and pan/
-ocr_cache_file = os.path.join("model", "ocr_cache.json")
-MODEL_OUT = os.path.join("model", "ocr_model.pkl")
+BASE_DIR = r"C:\Users\apeks\OneDrive\Desktop\Apeksha Desktop\College\SBI-Internship\KYC\ML_model"
+
+dataset_path = os.path.join(BASE_DIR, "dataset")                 # contains aadhaar/ and pan/
+augmented_path = os.path.join(BASE_DIR, "augmented_dataset")     # contains augmented aadhaar/ and pan/
+ocr_cache_file = os.path.join(BASE_DIR, "model", "ocr_cache.json")
+MODEL_OUT = os.path.join(BASE_DIR, "model", "ocr_model.pkl")
 
 # TF-IDF limit for speed/size
 TFIDF_MAX_FEATURES = 3000
@@ -169,7 +171,7 @@ def main():
     print(f"✅ Train Accuracy: {train_acc*100:.2f}%")
 
     # Save model
-    os.makedirs("model", exist_ok=True)
+    os.makedirs(os.path.dirname(MODEL_OUT), exist_ok=True)
     with open(MODEL_OUT, "wb") as f:
         pickle.dump((vectorizer, clf), f)
 
