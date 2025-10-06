@@ -2,31 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>KYC OCR - Aadhaar/PAN Detection</title>
+  <title>💫 KYC Document Scanner</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <div class="container">
-    <h1>Upload Aadhaar or PAN Card</h1>
+  <h1 class="page-title">💫 Upload Your Aadhaar or PAN Card</h1>
 
-    <!-- Drop zone -->
+  <form class="upload-form" action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
     <div class="drop-zone" id="dropZone">
-      <p>Drag & drop an image or click to upload</p>
-      <input type="file" name="file" id="fileInput" accept="image/*" required hidden>
+      <p>📁 Drag & drop your document or click to upload</p>
+      <input type="file" name="file" id="fileInput" accept="image/*" style="display:none" required>
     </div>
 
-    <!-- Preview -->
-    <img id="previewImage" class="preview" alt="Image Preview" style="display:none;">
-
-    <!-- Scan button -->
-    <button id="scanBtn" class="btn" style="display:none;">Scan Document</button>
-
-    <!-- Result -->
-    <div id="resultContainer" class="hidden">
-      <p id="predictionText"></p>
-      <a id="detailsBtn" href="#" class="btn hidden">Show Details</a>
-    </div>
-  </div>
+    <img id="previewImage" class="preview hidden" alt="🖼️ Image Preview">
+    <button type="submit" id="scanBtn">🔍 Scan Document</button>
+  </form>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

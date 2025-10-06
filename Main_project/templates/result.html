@@ -2,34 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Result - KYC OCR</title>
+  <title>🧾 KYC Result</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
 </head>
-<body class="result-page">
-  <h1 class="page-title">🧾 Prediction Result</h1>
+<body>
+  <div class="container">
+    <h1 class="page-title">💫 Prediction Result</h1>
 
-  <!-- Uploaded image -->
-  <div class="result-image-container">
-    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="result-image">
-  </div>
+    <div class="result-image-container">
+      <img src="{{ url_for('uploaded_file', filename=filename) }}" class="result-image" alt="Uploaded Image">
+    </div>
 
-  <div class="info-box fade-in">
-    <p><strong>Detected Type:</strong> {{ prediction }}</p>
+    <div class="info-box">
+      <p><strong>Detected Type:</strong> {{ prediction }}</p>
 
-    {% if extracted_data %}
+      {% if extracted_data %}
       <h3>Extracted Details:</h3>
       <ul>
         {% for key, value in extracted_data.items() %}
           <li><strong>{{ key }}:</strong> {{ value }}</li>
         {% endfor %}
       </ul>
-    {% endif %}
+      {% endif %}
 
-    <h3>Extracted Raw Text:</h3>
-    <pre>{{ extracted_text }}</pre>
+      <h3>Extracted Raw Text:</h3>
+      <pre>{{ extracted_text }}</pre>
+    </div>
+
+    <a href="{{ url_for('index') }}" class="back-btn">← Back to Upload</a>
   </div>
-
-  <a href="{{ url_for('index') }}" class="back-btn">← Back to Upload</a>
 </body>
 </html>
