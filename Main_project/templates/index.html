@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Document OCR — PAN/Aadhaar Detector</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      text-align: center;
+    }
+    .preview {
+      margin-top: 20px;
+      display: none;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    .upload-box {
+      border: 2px dashed #aaa;
+      padding: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload Your Document</h1>
+  <form action="{{ url_for('predict') }}" method="POST" enctype="multipart/form-data">
+    <div class="upload-box">
+      <input type="file" name="file" id="fileInput" accept="image/*" required>
+    </div>
+    <br>
+    <img id="previewImage" class="preview" alt="Image Preview">
+    <br><br>
+    <button type="submit">Upload & Scan</button>
+  </form>
+
+  <script>
+    // Show image preview
+    const fileInput = document.getElementById('fileInput');
+    const previewImage = document.getElementById('previewImage');
+
+    fileInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+          previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

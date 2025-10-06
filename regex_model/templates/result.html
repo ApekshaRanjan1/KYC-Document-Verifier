@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>OCR Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 16px;
+      align-items: start;
+    }
+    .uploaded-img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      cursor: pointer; /* makes it obvious it's clickable */
+    }
+    #processedPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    #processedPopup img {
+      max-width: 90%; max-height: 90%;
+      border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    #closePopup {
+      position: absolute; top: 20px; right: 30px; 
+      font-size: 24px; color: white; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>OCR Result</h1>
+
+    <div class="result-grid">
+      <!-- Left side: Uploaded Image -->
+      <div class="card">
+        <h2>Uploaded Image</h2>
+        <img id="uploadedImg" src="{{ url_for('uploaded_file', filename=result.filename) }}" 
+             alt="Uploaded Document" class="uploaded-img">
+      </div>
+      
+      <!-- Processed Popup -->
+      <div id="processedPopup">
+        <span id="closePopup">&times;</span>
+        <img src="{{ url_for('uploaded_file', filename=result.processed_filename) }}">
+      </div>
+
+      <!-- Right side: Extracted Text + Detection -->
+      <div class="card">
+        <h2>Extracted Text</h2>
+        <pre class="ocr-text">{{ result.raw_text or "(no text found)" }}</pre>
+
+        <h2>Detection</h2>
+        <div class="detection-row">
+          <div class="label">PAN</div>
+          <div class="value">
+            {% if result.pan_found %}
+              <span class="found">Found</span>
+              <div class="matches">
+                {% for p in result.pan_matches %}
+                  <div class="match">{{ p }}</div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <span class="notfound">Not found</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="detection-row">
+          <div class="label">Aadhaar</div>
+          <div class="value">
+            {% if result.aadhaar_found %}
+              <span class="found">Found</span>
+              <div class="matches">
+                {% for a in result.aadhaar_matches %}
+                  <div class="match">{{ a }}</div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <span class="notfound">Not found</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a class="btn back" href="{{ url_for('upload_and_scan') }}">Scan another</a>
+  </div>
+
+  <script>
+    const uploadedImg = document.getElementById('uploadedImg');
+    const popup = document.getElementById('processedPopup');
+    const closeBtn = document.getElementById('closePopup');
+
+    // Click on image to show processed popup
+    uploadedImg.addEventListener('click', () => {
+      popup.style.display = 'flex';
+    });
+
+    // Close popup when clicking close button
+    closeBtn.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+
+    // Close popup if clicked outside the image
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

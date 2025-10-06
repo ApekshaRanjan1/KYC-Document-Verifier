@@ -1,0 +1,85 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f8f9fa;
+  color: #222;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.container {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  max-width: 700px;
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+  color: #0078d7;
+}
+
+.upload-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+button {
+  background: #0078d7;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #005fa3;
+}
+
+.preview img {
+  margin-top: 20px;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.result-section, .image-section, .extraction-section, .ocr-section {
+  margin-top: 24px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+.highlight {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 1.2em;
+}
+
+.uploaded-img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+
+.back-btn {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.back-btn a {
+  text-decoration: none;
+  color: #0078d7;
+  font-weight: 500;
+}

@@ -1,0 +1,78 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f7f8fa;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 50px;
+}
+
+.container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #007bff;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input[type="file"] {
+  margin: 10px 0;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.upload-again {
+  background: #28a745;
+  margin-top: 10px;
+}
+
+.upload-again:hover {
+  background: #218838;
+}
+
+.message.error {
+  background: #ffe6e6;
+  color: #d9534f;
+  padding: 10px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.result {
+  text-align: left;
+  background: #f1f9ff;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 13px;
+}
