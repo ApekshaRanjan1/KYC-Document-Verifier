@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
 # ----------------------------
 # Helpers
 # ----------------------------
@@ -42,9 +43,10 @@ def index():
             # 🔹 Run ML model
             prediction, extracted_text = predict_document_type(filepath)
 
-            # 🔹 Run regex extraction
-            extracted_data = extract_details(extracted_text)
+            # 🔹 Run regex extraction (only needs image path + label)
+            extracted_data = extract_details(filepath, prediction)
 
+            # 🔹 Pass everything to result page
             return render_template(
                 "result.html",
                 filename=filename,
