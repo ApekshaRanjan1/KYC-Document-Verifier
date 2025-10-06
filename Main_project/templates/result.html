@@ -4,28 +4,17 @@
   <meta charset="utf-8" />
   <title>Result - KYC OCR</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-    body { font-family: "Poppins", sans-serif; text-align: center; margin: 3rem; }
-    img { margin-top: 20px; max-width: 400px; border: 1px solid #ccc; border-radius: 10px; }
-    .info-box {
-      margin-top: 20px; display: inline-block; text-align: left;
-      background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #ddd;
-      max-width: 600px; word-wrap: break-word;
-    }
-    a {
-      display: inline-block; margin-top: 20px;
-      text-decoration: none; color: #007bff; font-weight: 500;
-    }
-    pre { background: #f0f0f0; padding: 10px; border-radius: 8px; white-space: pre-wrap; text-align: left; }
-  </style>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
 </head>
-<body>
-  <h1>Prediction Result</h1>
+<body class="result-page">
+  <h1 class="page-title">🧾 Prediction Result</h1>
 
-  <!-- Uploaded image preview -->
-  <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image">
+  <!-- Uploaded image -->
+  <div class="result-image-container">
+    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image" class="result-image">
+  </div>
 
-  <div class="info-box">
+  <div class="info-box fade-in">
     <p><strong>Detected Type:</strong> {{ prediction }}</p>
 
     {% if extracted_data %}
@@ -41,6 +30,6 @@
     <pre>{{ extracted_text }}</pre>
   </div>
 
-  <a href="{{ url_for('index') }}">← Back to Upload</a>
+  <a href="{{ url_for('index') }}" class="back-btn">← Back to Upload</a>
 </body>
 </html>

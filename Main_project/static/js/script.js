@@ -1,58 +1,62 @@
-// Upload & Preview logic
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-const previewImage = document.getElementById('previewImage');
-const progressBar = document.getElementById('progressBar');
-const form = document.getElementById('uploadForm');
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+const previewImage = document.getElementById("previewImage");
+const scanBtn = document.getElementById("scanBtn");
+const resultContainer = document.getElementById("resultContainer");
+const predictionText = document.getElementById("predictionText");
+const detailsBtn = document.getElementById("detailsBtn");
 
-// Drag over styling
-dropZone.addEventListener('dragover', e => {
+// --- Dropzone logic ---
+dropZone.addEventListener("click", () => fileInput.click());
+dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();
-  dropZone.classList.add('dragover');
+  dropZone.classList.add("dragover");
 });
-
-dropZone.addEventListener('dragleave', () => {
-  dropZone.classList.remove('dragover');
-});
-
-// Drop handling
-dropZone.addEventListener('drop', e => {
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+dropZone.addEventListener("drop", (e) => {
   e.preventDefault();
-  dropZone.classList.remove('dragover');
+  dropZone.classList.remove("dragover");
   const file = e.dataTransfer.files[0];
-  if (file) {
-    fileInput.files = e.dataTransfer.files;
-    showPreview(file);
-  }
+  if (file) showPreview(file);
+  fileInput.files = e.dataTransfer.files;
 });
 
-// Click to browse
-dropZone.addEventListener('click', () => fileInput.click());
-
-// File selection
-fileInput.addEventListener('change', () => {
-  if (fileInput.files[0]) showPreview(fileInput.files[0]);
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length > 0) showPreview(fileInput.files[0]);
 });
 
-// Preview image
 function showPreview(file) {
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = (e) => {
+    dropZone.style.display = "none"; // hide box
     previewImage.src = e.target.result;
-    previewImage.style.display = 'block';
+    previewImage.style.display = "block";
+    scanBtn.style.display = "inline-block";
   };
   reader.readAsDataURL(file);
 }
 
-// Simulated progress bar on submit
-form.addEventListener('submit', () => {
-  progressBar.style.display = 'block';
-  let width = 0;
-  const interval = setInterval(() => {
-    if (width >= 100) clearInterval(interval);
-    else {
-      width += 3;
-      progressBar.style.width = width + '%';
-    }
-  }, 80);
+// --- Scan document ---
+scanBtn.addEventListener("click", async () => {
+  if (!fileInput.files.length) {
+    alert("Please upload an image first.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", fileInput.files[0]);
+
+  resultContainer.classList.remove("hidden");
+  predictionText.textContent = "Scanning document...";
+
+  const response = await fetch("/scan", { method: "POST", body: formData });
+  const data = await response.json();
+
+  if (data.error) {
+    predictionText.textContent = `Error: ${data.error}`;
+  } else {
+    predictionText.innerHTML = `Detected: <strong>${data.prediction}</strong>`;
+    detailsBtn.href = `/result/${data.filename}`;
+    detailsBtn.classList.remove("hidden");
+  }
 });

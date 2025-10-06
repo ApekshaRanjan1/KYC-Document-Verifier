@@ -2,66 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Upload KYC Document</title>
+  <title>KYC OCR - Aadhaar/PAN Detection</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-    body { font-family: "Poppins", sans-serif; text-align: center; margin: 3rem; }
-    .drop-zone {
-      border: 2px dashed #999; padding: 30px; border-radius: 12px;
-      color: #555; cursor: pointer; transition: background 0.3s;
-      max-width: 400px; margin: auto;
-    }
-    .drop-zone.dragover { background: #f0f8ff; border-color: #007bff; }
-    .preview { margin-top: 20px; display: none; max-width: 400px; border-radius: 10px; border: 1px solid #ccc; }
-    button {
-      background: #007bff; color: white; border: none;
-      padding: 10px 20px; border-radius: 8px; cursor: pointer;
-      margin-top: 20px; font-size: 1rem;
-    }
-    button:hover { background: #0056b3; }
-  </style>
 </head>
 <body>
-  <h1>Upload Aadhaar or PAN Card</h1>
-  <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
+  <div class="container">
+    <h1>Upload Aadhaar or PAN Card</h1>
+
+    <!-- Drop zone -->
     <div class="drop-zone" id="dropZone">
       <p>Drag & drop an image or click to upload</p>
-      <input type="file" name="file" id="fileInput" accept="image/*" style="display:none" required>
+      <input type="file" name="file" id="fileInput" accept="image/*" required hidden>
     </div>
-    <img id="previewImage" class="preview" alt="Image Preview">
-    <br>
-    <button type="submit">Scan Document</button>
-  </form>
 
-  <script>
-    const dropZone = document.getElementById("dropZone");
-    const fileInput = document.getElementById("fileInput");
-    const previewImage = document.getElementById("previewImage");
+    <!-- Preview -->
+    <img id="previewImage" class="preview" alt="Image Preview" style="display:none;">
 
-    dropZone.addEventListener("click", () => fileInput.click());
-    dropZone.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropZone.classList.add("dragover");
-    });
-    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-    dropZone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropZone.classList.remove("dragover");
-      const file = e.dataTransfer.files[0];
-      if (file) showPreview(file);
-      fileInput.files = e.dataTransfer.files;
-    });
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files.length > 0) showPreview(fileInput.files[0]);
-    });
-    function showPreview(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImage.src = e.target.result;
-        previewImage.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    }
-  </script>
+    <!-- Scan button -->
+    <button id="scanBtn" class="btn" style="display:none;">Scan Document</button>
+
+    <!-- Result -->
+    <div id="resultContainer" class="hidden">
+      <p id="predictionText"></p>
+      <a id="detailsBtn" href="#" class="btn hidden">Show Details</a>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
