@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import os
 from werkzeug.utils import secure_filename
@@ -15,7 +14,6 @@ app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
 # ----------------------------
 # Helpers
 # ----------------------------
@@ -26,40 +24,36 @@ def allowed_file(filename):
 # ----------------------------
 # Routes
 # ----------------------------
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
+    if request.method == "POST":
+        if "file" not in request.files:
+            return redirect(url_for("index"))
+
+        file = request.files["file"]
+        if file.filename == "":
+            return redirect(url_for("index"))
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            file.save(filepath)
+
+            # 🔹 Run ML model
+            prediction, extracted_text = predict_document_type(filepath)
+
+            # 🔹 Run regex extraction
+            extracted_data = extract_details(extracted_text)
+
+            return render_template(
+                "result.html",
+                filename=filename,
+                prediction=prediction,
+                extracted_data=extracted_data,
+                extracted_text=extracted_text
+            )
+
     return render_template("index.html")
-
-
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    if "file" not in request.files:
-        return redirect(url_for("index"))
-
-    file = request.files["file"]
-    if file.filename == "":
-        return redirect(url_for("index"))
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(filepath)
-
-        # Step 1: Predict doc type
-        predicted_label, ocr_text = predict_document_type(filepath)
-
-        # Step 2: Extract details based on type
-        extracted = extract_details(filepath, predicted_label)
-
-        return render_template(
-            "result.html",
-            filename=filename,
-            predicted_label=predicted_label,
-            extracted_text=ocr_text,
-            extracted=extracted
-        )
-
-    return redirect(url_for("index"))
 
 
 @app.route("/uploads/<filename>")
@@ -71,4 +65,4 @@ def uploaded_file(filename):
 # Run
 # ----------------------------
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(port=5001, debug=True)

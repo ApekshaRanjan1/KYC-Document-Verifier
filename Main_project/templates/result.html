@@ -1,65 +1,38 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Document Classification Result</title>
+  <meta charset="utf-8" />
+  <title>Result - KYC OCR</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
-    body {
-      font-family: "Inter", sans-serif;
-      background: #f6f8fa;
-      text-align: center;
-      padding: 3rem;
+    body { font-family: "Poppins", sans-serif; text-align: center; margin: 3rem; }
+    img { margin-top: 20px; max-width: 400px; border: 1px solid #ccc; border-radius: 10px; }
+    .info-box {
+      margin-top: 20px; display: inline-block; text-align: left;
+      background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #ddd;
     }
-
-    .card {
-      background: white;
-      display: inline-block;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease;
-    }
-
-    .card:hover {
-      transform: scale(1.02);
-    }
-
-    h2 {
-      color: #333;
-    }
-
-    img {
-      margin-top: 1rem;
-      max-width: 350px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
     a {
-      display: inline-block;
-      margin-top: 1.5rem;
-      text-decoration: none;
-      color: white;
-      background: #007bff;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 500;
-      transition: background 0.3s ease;
-    }
-
-    a:hover {
-      background: #0056b3;
+      display: inline-block; margin-top: 20px;
+      text-decoration: none; color: #007bff; font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Detected Document Type</h2>
-    <h3 style="color:#007bff;">{{ prediction }}</h3>
-    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image">
+  <h1>Prediction Result</h1>
+  <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image">
+  <div class="info-box">
+    <p><strong>Detected Type:</strong> {{ prediction }}</p>
+    {% if extracted_data %}
+      <h3>Extracted Details:</h3>
+      <ul>
+        {% for key, value in extracted_data.items() %}
+          <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <h3>Extracted Raw Text:</h3>
+    <pre>{{ extracted_text }}</pre>
   </div>
-  <br>
-  <a href="{{ url_for('index') }}">← Upload Another</a>
+  <a href="{{ url_for('index') }}">← Back to Upload</a>
 </body>
 </html>
