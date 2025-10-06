@@ -12,9 +12,6 @@ env/
 # Uploads folder (user-uploaded documents)
 uploads/
 
-# Model files (optional: if large or sensitive)
-model/trained_model.pkl
-model/*.h5
 
 # OS files
 .DS_Store
@@ -30,7 +27,5 @@ Thumbs.db
 *.sublime-project
 
 dataset
-
-model
 
 augmented_dataset
