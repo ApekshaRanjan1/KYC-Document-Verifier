@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from ml_model import predict_document_type
 from regex_ex import extract_details
 
+
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 ALLOWED_EXT = {"png", "jpg", "jpeg"}
 
@@ -15,8 +16,13 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
 
 @app.route("/", methods=["GET"])
+def home():
+    return render_template("landing.html")
+
+@app.route("/scan", methods=["GET"])
 def index():
     return render_template("index.html")
+
 
 @app.route("/scan", methods=["POST"])
 def scan():

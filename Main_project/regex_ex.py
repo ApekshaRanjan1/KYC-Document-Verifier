@@ -4,21 +4,11 @@ import pytesseract
 import re
 from PIL import Image
 
-# ----------------------------
-# Tesseract Path (Windows)
-# ----------------------------
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-# ----------------------------
-# Regex Patterns
-# ----------------------------
 PAN_REGEX = r"\b[A-Z]{5}[0-9]{4}[A-Z]\b"
 AADHAAR_REGEX = r"\b\d{4}\s\d{4}\s\d{4}\b"
-DOB_REGEX = r"\b\d{2}/\d{2}/\d{4}\b"  # For PAN DOB extraction
 
-# ----------------------------
-# Image Preprocessing
-# ----------------------------
 def preprocess_image(image_path):
     img = cv2.imread(image_path)
     if img is None:
@@ -29,75 +19,64 @@ def preprocess_image(image_path):
     thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     return thresh
 
-# ----------------------------
-# Extraction Function
-# ----------------------------
 def extract_details(image_path, extracted_text, predicted_label):
-    """
-    Extract structured Aadhaar or PAN details using OCR + regex.
-    Outputs a dictionary like:
-    {
-        "document_type": "Aadhaar",
-        "name": "Full Name",
-        "dob": "YYYY-MM-DD",
-        "aadhaar_number": "XXXX XXXX XXXX",
-        "document_number": "ABCDE1234F",
-        "status": "verified"
-    }
-    """
+    """Extract PAN/Aadhaar info using OCR + regex."""
     processed = preprocess_image(image_path)
     config = r"--oem 3 --psm 6 -l eng+hin"
 
-    # OCR from image
     text_from_image = pytesseract.image_to_string(processed, config=config)
     if not text_from_image.strip():
         gray = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
         text_from_image = pytesseract.image_to_string(gray, config=config)
 
-    # Merge ML OCR + image OCR
     full_text = f"{extracted_text}\n{text_from_image}"
+    clean_text = re.sub(r"[^A-Za-z0-9\s\u0900-\u097F:/.,-]", " ", full_text)
 
-    # Clean text (remove weird symbols)
-    clean_text = re.sub(r"[^A-Za-z0-9\s\u0900-\u097F:/,.-]", " ", full_text)
-
-    # Detect document type via keywords
     doc_type = "Unknown"
     if re.search(r"आधार|aadhaar|uidai", clean_text, re.I):
-        doc_type = "Aadhaar"
+        doc_type = "Aadhaar Card"
     elif re.search(r"pan|income|tax", clean_text, re.I):
-        doc_type = "PAN"
+        doc_type = "PAN Card"
 
-    result = {"document_type": doc_type, "status": "unverified"}
-
-    # Extract numbers
     pan_matches = re.findall(PAN_REGEX, clean_text)
     aadhaar_matches = re.findall(AADHAAR_REGEX, clean_text)
 
-    if doc_type == "Aadhaar":
-        result["aadhaar_number"] = aadhaar_matches[0] if aadhaar_matches else "Unknown"
+    filtered = []
+    name = ""
+    dob = ""
+    document_number = ""
 
-        # Name extraction (look for lines after "name" or "c/o")
-        name_match = re.search(r"(?:name|नाम|c/o)\s*[:\-]?\s*([A-Za-z\s]+)", clean_text, re.I)
-        result["name"] = name_match.group(1).strip() if name_match else "Unknown"
+    if doc_type == "Aadhaar Card":
+        filtered = aadhaar_matches
+        document_number = aadhaar_matches[0] if aadhaar_matches else ""
+        name_match = re.search(r"(?:Name|नाम)[:\s]*([A-Za-z\s]+)", clean_text, re.I)
+        if name_match:
+            name = name_match.group(1).strip()
+    elif doc_type == "PAN Card":
+        filtered = pan_matches
+        document_number = pan_matches[0] if pan_matches else ""
+        # Find name: often above PAN number
+        if pan_matches:
+            pan_idx = clean_text.find(pan_matches[0])
+            # Take 100 chars before PAN number and try to find the name
+            before_pan = clean_text[max(0, pan_idx-100):pan_idx]
+            # Heuristic: Names are words with capital letters
+            name_candidates = re.findall(r"[A-Z][a-z]+(?: [A-Z][a-z]+)*", before_pan)
+            if name_candidates:
+                name = " ".join(name_candidates)
+        # Try DOB
+        dob_match = re.search(r"\b(\d{2}/\d{2}/\d{4})\b", clean_text)
+        if dob_match:
+            dob = dob_match.group(1)
 
-        result["document_number"] = result["aadhaar_number"]
-
-    elif doc_type == "PAN":
-        result["document_number"] = pan_matches[0] if pan_matches else "Unknown"
-
-        # Name extraction (usually above PAN number)
-        name_match = re.search(r"([A-Z][a-z]+\s[A-Z][a-z]+)", clean_text)
-        result["name"] = name_match.group(1) if name_match else "Unknown"
-
-        # DOB extraction
-        dob_match = re.search(DOB_REGEX, clean_text)
-        result["dob"] = dob_match.group(0) if dob_match else "Unknown"
-
-    # Verify if key fields are present
-    key_fields = ["name", "document_number"]
-    result["status"] = "verified" if all(result.get(k) and result[k] != "Unknown" for k in key_fields) else "unverified"
-
-    # Add raw text for debugging if needed
-    result["raw_text"] = clean_text.strip()
-
-    return result
+    return {
+        "document_type": doc_type,
+        "status": "verified" if filtered else "unverified",
+        "name": name,
+        "document_number": document_number,
+        "dob": dob,
+        "raw_text": clean_text.strip(),
+        "pan_matches": pan_matches,
+        "aadhaar_matches": aadhaar_matches,
+        "filtered_matches": filtered
+    }
