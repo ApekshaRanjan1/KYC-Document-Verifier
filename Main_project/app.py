@@ -91,5 +91,9 @@ def uploaded_file(filename):
 def home():
     return redirect(url_for("landing"))
 
+@app.route('/about-us')
+def aboutus():
+    return render_template('aboutus.html')
+
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
