@@ -5,10 +5,26 @@ body {
   font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #e6e6fa, #ffffff);
+  background-image: url('../img/lightmode.png'); /* Light mode background */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #333;
   min-height: 100vh;
   text-align: center;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Overlay for readability */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  z-index: -1;
+  transition: background 0.5s ease;
 }
 
 /* ==========================
@@ -23,7 +39,6 @@ body {
   background: rgba(255, 255, 255, 0.25);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  /*border-bottom: 1px solid rgba(200, 180, 220, 0.3);*/
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -69,10 +84,11 @@ body {
   box-shadow: 0 8px 25px rgba(0,0,0,0.08);
   max-width: 480px;
   width: 90%;
-  margin: 6rem auto 2rem auto; /* space below navbar */
+  margin: 6rem auto 2rem auto; 
   text-align: center;
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
+  transition: background 0.5s ease;
 }
 
 /* ==========================
@@ -82,6 +98,7 @@ body {
   color: #4b0082;
   font-size: 2rem;
   margin-bottom: 1.5rem;
+  transition: color 0.5s ease;
 }
 
 /* ==========================
@@ -136,6 +153,7 @@ body {
   justify-content: center;
   align-items: center;
   background: rgba(255, 255, 255, 0.85);
+  transition: background 0.5s ease;
 }
 
 .result-image {
@@ -168,9 +186,9 @@ button:hover, .details-btn:hover, .back-btn:hover {
 }
 
 #detailsBtn {
-  display: block;       /* makes it a block element */
-  margin: 10px auto 0;  /* top margin 10px, auto left/right to center, 0 bottom */
-  text-align: center;   /* ensures text inside button is centered */
+  display: block;
+  margin: 10px auto 0;
+  text-align: center;
 }
 
 /* ==========================
@@ -186,6 +204,7 @@ button:hover, .details-btn:hover, .back-btn:hover {
   max-width: 500px;
   text-align: left;
   box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: background 0.5s ease, border-color 0.5s ease;
 }
 
 .info-box ul {
@@ -238,4 +257,83 @@ button:hover, .details-btn:hover, .back-btn:hover {
     width: 100%;
     height: 250px;
   }
+}
+
+/* ==========================
+   Dark Mode Styles
+========================== */
+body.dark-mode {
+  background: url("../img/darkmode.png") no-repeat center center fixed;
+  background-size: cover;
+  color: #E0E0E0; /* Soft Off-White for primary text */
+}
+
+body.dark-mode .navbar {
+  background: rgba(10, 10, 40, 0.85);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .navbar .nav-links li a,
+body.dark-mode .logo a {
+  color: #00BFFF; /* Electric Blue / Cyan for interactive elements */
+}
+
+body.dark-mode .navbar .nav-links li a:hover {
+  color: #00FFFF; /* Slightly brighter cyan on hover */
+}
+
+body.dark-mode .glass-card,
+body.dark-mode .result-box,
+body.dark-mode .info-box,
+body.dark-mode .drop-zone,
+body.dark-mode .image-frame {
+  background: rgba(20, 20, 40, 0.8);
+  border-color: #00BFFF; /* Electric Blue accent */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .page-title {
+  color: #E0E0E0; /* Soft Off-White */
+}
+
+body.dark-mode .upload-form p,
+body.dark-mode .info-box ul li {
+  color: #AEC6CF; /* Light Steel Blue for secondary text */
+}
+
+body.dark-mode button,
+body.dark-mode .details-btn,
+body.dark-mode .back-btn {
+  background: linear-gradient(90deg, #00BFFF, #1E90FF); /* Electric Blue gradient */
+  color: #E0E0E0;
+  border: none;
+}
+
+body.dark-mode button:hover,
+body.dark-mode .details-btn:hover,
+body.dark-mode .back-btn:hover {
+  background: linear-gradient(90deg, #1E90FF, #00FFFF);
+  transform: scale(1.05);
+}
+
+body.dark-mode .status-success {
+  color: #3CB371; /* Medium Sea Green for success */
+  font-weight: bold;
+}
+
+body.dark-mode .status-error {
+  color: #DC143C; /* Crimson Red for errors */
+  font-weight: bold;
+}
+
+body.dark-mode details summary {
+  color: #00BFFF; /* Electric Blue for details toggle */
+}
+
+body.dark-mode pre {
+  background: rgba(0,0,50,0.5);
+  color: #E0E0E0;
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
 }

@@ -14,6 +14,9 @@
     <li><a href="{{ url_for('landing') }}#about">About</a></li>
     <li><a href="{{ url_for('landing') }}#how">How It Works</a></li>
     <li><a href="{{ url_for('index') }}" class="btn">Start Scanning</a></li>
+    <li>
+      <button id="darkModeToggle" style="padding:6px 12px; border-radius:8px; font-size:0.9rem;">🌙 Dark Mode</button>
+    </li>
   </ul>
   </nav>
 
@@ -21,5 +24,8 @@
 
   {% block content %}
   {% endblock %}
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
 </body>
 </html>
