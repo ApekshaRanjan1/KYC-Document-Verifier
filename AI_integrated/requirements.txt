@@ -1,0 +1,10 @@
+flask
+python-dotenv
+openai
+google-cloud-vision
+opencv-python
+pillow
+face-recognition
+# Optional utilities
+requests
+numpy
