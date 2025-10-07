@@ -14,23 +14,18 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
 
-# ----------------------------
-# Landing Page
-# ----------------------------
+
+#landing page
 @app.route("/landing")
 def landing():
     return render_template("landing.html")
 
-# ----------------------------
-# Upload Page
-# ----------------------------
+#upload page
 @app.route("/scan", methods=["GET"])
 def index():
     return render_template("index.html")
 
-# ----------------------------
-# Handle Upload + Scan (AJAX)
-# ----------------------------
+# upload+scan(ajax)
 @app.route("/scan", methods=["POST"])
 def scan():
     if "file" not in request.files:
@@ -57,9 +52,7 @@ def scan():
 
     return jsonify({"error": "Invalid file"}), 400
 
-# ----------------------------
-# Result Page
-# ----------------------------
+#result page
 @app.route("/result/<filename>")
 def result(filename):
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -77,16 +70,14 @@ def result(filename):
         extracted_text=extracted_text
     )
 
-# ----------------------------
-# Serve Uploaded Files
-# ----------------------------
+
+#serve uploaded files
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-# ----------------------------
-# Root Redirect to Landing
-# ----------------------------
+
+#root redirect to landing
 @app.route("/", methods=["GET"])
 def home():
     return redirect(url_for("landing"))
