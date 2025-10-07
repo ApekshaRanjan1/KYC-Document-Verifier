@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>💫 KYC Document Scanner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+  <div class="logo">
+    <a href="{{ url_for('landing') }}" style="text-decoration:none; color: inherit;">KYC Verifier</a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="{{ url_for('landing') }}#about">About</a></li>
+    <li><a href="{{ url_for('landing') }}#how">How It Works</a></li>
+    <li><a href="{{ url_for('index') }}" class="btn">Start Scanning</a></li>
+  </ul>
+  </nav>
+
+
+
+  {% block content %}
+  {% endblock %}
+</body>
+</html>
