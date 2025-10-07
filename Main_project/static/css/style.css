@@ -327,7 +327,7 @@ body.dark-mode .status-error {
 }
 
 body.dark-mode details summary {
-  color: #00BFFF; /* Electric Blue for details toggle */
+  color: #245261; /* Electric Blue for details toggle */
 }
 
 body.dark-mode pre {
