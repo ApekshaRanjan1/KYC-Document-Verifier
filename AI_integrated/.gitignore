@@ -1,0 +1,30 @@
+# ---- ENV & API KEYS ----
+.env
+*.json
+google-vision-key.json
+
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# ---- Virtual Environments ----
+venv/
+env/
+.venv/
+
+# ---- Uploads / Temporary Files ----
+uploads/
+temp/
+*.log
+
+# ---- OS Files ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- VS Code ----
+.vscode/
