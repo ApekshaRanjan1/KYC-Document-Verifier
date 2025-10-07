@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>KYC Document Verifier</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="animated-bg">
+  <nav class="navbar">
+    <div class="logo">KYC Verifier</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="{{ url_for('index') }}" class="btn">Start Scanning</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Instant Identity Verification</h1>
+      <p>Upload your PAN, Aadhaar, or other ID to extract and verify details using OCR + AI.</p>
+      <a href="{{ url_for('index') }}" class="cta">Get Started</a>
+    </div>
+  </header>
+
+  <section id="about" class="section about">
+    <h2>About</h2>
+    <p>Our platform uses AI-driven OCR and ML models to identify documents, extract information, and verify identity instantly.</p>
+  </section>
+
+  <section id="how" class="section how">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>1. Upload</h3>
+        <p>Choose a document — Aadhaar, PAN, or Passport.</p>
+      </div>
+      <div class="step">
+        <h3>2. Scan</h3>
+        <p>Our AI model reads and classifies the document type.</p>
+      </div>
+      <div class="step">
+        <h3>3. Verify</h3>
+        <p>Get extracted details in a clean, verified format.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 KYC Verifier • Made with ❤️ by Apeksha</p>
+  </footer>
+
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #222;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* 🌈 Animated Gradient Background */
+.animated-bg {
+  background: linear-gradient(-45deg, #e3f2fd, #bbdefb, #f8bbd0, #e1bee7);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🧭 Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px); /* for Safari support */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.navbar .logo { font-size: 1.5em; font-weight: 700; color: #1565c0; }
+.navbar ul { list-style: none; display: flex; gap: 20px; align-items: center; }
+.navbar a { text-decoration: none; color: #333; transition: 0.3s; }
+.navbar a:hover { color: #1565c0; }
+.navbar .btn {
+  background: #1565c0;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 25px;
+  transition: 0.3s;
+}
+.navbar .btn:hover { background: #0d47a1; transform: scale(1.05); }
+
+/* 💫 Hero Section */
+.hero {
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #0d47a1;
+  animation: fadeIn 1.2s ease-in-out;
+}
+.hero-content h1 {
+  font-size: 3.2rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+.hero-content p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 30px;
+  color: #333;
+}
+.hero-content .cta {
+  background: #1565c0;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(21, 101, 192, 0.3);
+}
+.hero-content .cta:hover {
+  background: #0d47a1;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(21, 101, 192, 0.4);
+}
+
+/* ✨ Sections */
+.section {
+  padding: 80px 100px;
+  text-align: center;
+  animation: fadeUp 1s ease-out;
+}
+.section h2 {
+  font-size: 2rem;
+  color: #0d47a1;
+  margin-bottom: 25px;
+  position: relative;
+}
+.section h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #1565c0;
+  margin: 10px auto;
+  border-radius: 2px;
+}
+.section p {
+  color: #444;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+/* 🪶 Floating Step Cards */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.step {
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 25px;
+  padding: 35px;
+  width: 260px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  -webkit-backdrop-filter: blur(10px); /* for Safari support */
+  backdrop-filter: blur(10px);
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.step:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(21, 101, 192, 0.2);
+}
+.step h3 {
+  color: #1565c0;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+/* 🦋 Footer */
+footer {
+  background: #0d47a1;
+  color: white;
+  text-align: center;
+  padding: 25px 0;
+  font-size: 0.9rem;
+  margin-top: 60px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
