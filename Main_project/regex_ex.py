@@ -16,13 +16,25 @@ def preprocess_image(image_path, save_path=None):
         raise FileNotFoundError(f"Could not load image: {image_path}")
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-    
+
+    # Light contrast enhancement (CLAHE)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    gray = clahe.apply(gray)
+
+    # Optional mild denoising
+    denoised = cv2.fastNlMeansDenoising(gray, h=10)
+
+    # Adaptive threshold (keeps text readable in varied lighting)
+    thresh = cv2.adaptiveThreshold(
+        denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+        cv2.THRESH_BINARY, 31, 10
+    )
+
     if save_path:
         cv2.imwrite(save_path, thresh)
-    
+
     return thresh
+
 
 def extract_details(image_path, extracted_text, predicted_label, save_processed_path=None):
     """Extract PAN/Aadhaar info using OCR + regex."""
