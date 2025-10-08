@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------- Load saved dark mode ----------------
   if (localStorage.getItem("darkMode") === "enabled") {
     document.body.classList.add("dark-mode");
-    if (darkModeToggle) darkModeToggle.textContent = "☀️ Light Mode";
+    if (darkModeToggle) darkModeToggle.textContent = "☀️";
   }
 
   // ---------------- Dark Mode Toggle ----------------

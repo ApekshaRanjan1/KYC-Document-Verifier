@@ -183,6 +183,11 @@ body.dark-mode .hero p,
 body.dark-mode .section p {
   color: #b8c7d9;
 }
+body.dark-mode .section.alt {
+  background: rgba(20, 20, 40, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
 body.dark-mode .step {
   background: rgba(20, 20, 40, 0.85);
   box-shadow: 0 15px 35px rgba(0, 191, 255, 0.2);
