@@ -88,11 +88,18 @@ body {
   top: 0;
   z-index: 100;
 }
+
+/* Logo container */
 .navbar .logo {
-  font-size: 1.5em;
-  font-weight: 700;
-  color: #1565c0;
+  margin-right: auto;
 }
+
+.navbar .logo img {
+  height: 70px; /* Adjust height as needed */
+  width: auto;  /* Maintain aspect ratio */
+  display: block;
+}
+
 .navbar ul {
   list-style: none;
   display: flex;
