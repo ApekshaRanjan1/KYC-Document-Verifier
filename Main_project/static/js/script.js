@@ -6,11 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultBox = document.getElementById("resultBox");
   const resultText = document.getElementById("resultText");
   const detailsBtn = document.getElementById("detailsBtn");
-  const darkModeToggle = document.getElementById("darkModeToggle");
 
   let currentFilename = "";
 
-  // ---------------- Drag & drop + click to upload ----------------
+  // --- Drag and Drop ---
   if (dropZone && fileInput) {
     dropZone.addEventListener("click", () => fileInput.click());
     dropZone.addEventListener("dragover", (e) => {
@@ -30,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ---------------- Show preview ----------------
   function showPreview(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -41,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   }
 
-  // ---------------- Handle form submission via AJAX ----------------
+  // --- Form submission ---
   if (uploadForm) {
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -58,8 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "POST",
           body: formData
         });
-
         const data = await response.json();
+
         if (data.error) {
           if (resultText) resultText.innerHTML = data.error;
           if (detailsBtn) detailsBtn.classList.add("hidden");
@@ -80,22 +78,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ---------------- Load saved dark mode ----------------
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-    if (darkModeToggle) darkModeToggle.textContent = "☀️";
-  }
+   // --- DARK MODE SETUP ---
+  const darkModeToggle = document.getElementById("darkModeToggle");
 
-  // ---------------- Dark Mode Toggle ----------------
   if (darkModeToggle) {
+    const sunIcon = darkModeToggle.getAttribute("data-sun");
+    const moonIcon = darkModeToggle.getAttribute("data-moon");
+
+    // Apply saved mode from localStorage
+    if (localStorage.getItem("darkMode") === "enabled") {
+      document.body.classList.add("dark-mode");
+      darkModeToggle.src = sunIcon;
+    } else {
+      document.body.classList.remove("dark-mode");
+      darkModeToggle.src = moonIcon;
+    }
+
+    // Add click event listener
     darkModeToggle.addEventListener("click", () => {
       document.body.classList.toggle("dark-mode");
 
       if (document.body.classList.contains("dark-mode")) {
-        darkModeToggle.textContent = "☀️ Light Mode";
+        darkModeToggle.src = sunIcon;
         localStorage.setItem("darkMode", "enabled");
       } else {
-        darkModeToggle.textContent = "🌙 Dark Mode";
+        darkModeToggle.src = moonIcon;
         localStorage.setItem("darkMode", "disabled");
       }
     });

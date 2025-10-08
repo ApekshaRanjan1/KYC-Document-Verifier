@@ -14,9 +14,19 @@
     <div class="nav-left-menu">
       <li><a href="{{ url_for('aboutus') }}#aboutus">About US</a></li>
       <li><a href="{{ url_for('landing') }}#how">How It Works</a></li>
+      <li><a href="{{ url_for('index') }}#scanning">Start Scanning</a></li>
     </div>
     <li>
-      <button id="darkModeToggle" style="padding:6px 12px; border-radius:8px; font-size:0.9rem;">🌙</button>
+      <li>
+      <img
+        id="darkModeToggle"
+        src="{{ url_for('static', filename='img/Moon.svg') }}"
+        data-sun="{{ url_for('static', filename='img/Nature.svg') }}"
+        data-moon="{{ url_for('static', filename='img/Moon.svg') }}"
+        alt="Toggle Dark Mode"
+        style="width: 50px; height: 50px; cursor: pointer; vertical-align: middle;"
+      />
+      </li>
     </li>
   </ul>
   </nav>
