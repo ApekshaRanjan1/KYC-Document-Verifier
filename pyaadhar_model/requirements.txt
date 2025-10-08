@@ -1,6 +1,0 @@
-Flask
-opencv-python
-pyaadhaar
-Pillow
-pandas
-python-dotenv
