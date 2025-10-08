@@ -36,22 +36,6 @@ pip install -r requirements.txt
 
 ---
 
-## Usage
-Run the main script with the input image path  
-```bash
-python main.py --input path/to/document.jpg --output result.json
-```  
-
-You can also integrate the verifier as a module  
-```python
-from verifier import Verifier  
-ver = Verifier("config.yaml")  
-result = ver.verify("input_document.jpg")  
-print(result)
-```
-
----
-
 ## Dataset
 1. **Aadhar Dataset:** [Kaggle Link](https://www.kaggle.com/datasets/nagendra048/aadhar-dataset)   
 2. **PAN Card Dataset:** [Kaggle Link](https://www.kaggle.com/datasets/nagendra048/pan-card-dataset)
