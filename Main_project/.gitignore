@@ -35,4 +35,5 @@ model/ocr_cache.pkl
 
 check.py
 
-
+preprocessed
+preprocessed/*
