@@ -2,6 +2,7 @@
 import cv2
 import pytesseract
 import re
+import os
 from PIL import Image
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -9,7 +10,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 PAN_REGEX = r"\b[A-Z]{5}[0-9]{4}[A-Z]\b"
 AADHAAR_REGEX = r"\b\d{4}\s\d{4}\s\d{4}\b"
 
-def preprocess_image(image_path):
+def preprocess_image(image_path, save_path=None):
     img = cv2.imread(image_path)
     if img is None:
         raise FileNotFoundError(f"Could not load image: {image_path}")
@@ -17,11 +18,15 @@ def preprocess_image(image_path):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    
+    if save_path:
+        cv2.imwrite(save_path, thresh)
+    
     return thresh
 
-def extract_details(image_path, extracted_text, predicted_label):
+def extract_details(image_path, extracted_text, predicted_label, save_processed_path=None):
     """Extract PAN/Aadhaar info using OCR + regex."""
-    processed = preprocess_image(image_path)
+    processed = preprocess_image(image_path, save_path=save_processed_path)
     config = r"--oem 3 --psm 6 -l eng+hin"
 
     text_from_image = pytesseract.image_to_string(processed, config=config)

@@ -1,1 +1,38 @@
 uploads
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+*.env
+
+# Uploads folder (user-uploaded documents)
+uploads/
+
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE/project files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+dataset
+
+augmented_dataset
+
+model/ocr_cache.pkl
+
+check.py
+
+

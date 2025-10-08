@@ -1,21 +1,33 @@
-{% extends "navbase.html" %}
-
-{% block content %}
+{% extends "navbase.html" %} {% block content %}
 <div class="upload-container glass-card">
   <h1 class="page-title">💫 Upload Your Aadhaar or PAN Card</h1>
 
-  <form class="upload-form" id="uploadForm" enctype="multipart/form-data">
+  <form
+    class="upload-form"
+    id="uploadForm"
+    enctype="multipart/form-data"
+    action="javascript:void(0)"
+  >
     <div class="drop-zone" id="dropZone">
-      <p>📁 Drag & drop your document or click to upload</p>
-      <input type="file" name="file" id="fileInput" accept="image/*" style="display:none" required>
+      <p>📁 Click to upload</p>
+      <input
+        type="file"
+        name="file"
+        id="fileInput"
+        accept="image/*"
+        style="display: none"
+        required
+      />
     </div>
 
-    <img id="previewImage" class="preview hidden" alt="🖼️ Image Preview">
+    <img id="previewImage" class="preview hidden" alt="🖼️ Image Preview" />
     <button type="submit" id="scanBtn">🔍 Scan Document</button>
 
     <div id="resultBox" class="result-box hidden fade-in">
-      <h3>🧾 Detected:</h3>
-      <p id="resultText"><strong>—</strong></p>
+      <div class="result-content">
+        <h3>🧾 Detected:</h3>
+        <p id="resultText"><strong>—</strong></p>
+      </div>
       <a id="detailsBtn" href="#" class="details-btn hidden">📋 Show Details</a>
     </div>
   </form>
@@ -34,8 +46,8 @@
   let currentFilename = "";
 
   // Drag & drop + click
-  dropZone.addEventListener("click", () => fileInput.click());
 
+  /*dropZone.addEventListener("click", () => fileInput.click()); 
   dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
     dropZone.classList.add("dragover");
@@ -49,7 +61,7 @@
     const file = e.dataTransfer.files[0];
     if (file) showPreview(file);
     fileInput.files = e.dataTransfer.files;
-  });
+  });*/
 
   fileInput.addEventListener("change", () => {
     if (fileInput.files.length > 0) showPreview(fileInput.files[0]);
@@ -80,7 +92,7 @@
     try {
       const response = await fetch("/scan", {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
       const data = await response.json();

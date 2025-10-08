@@ -14,7 +14,7 @@ import re
 # ----------------------------
 # CONFIG (absolute paths)
 # ----------------------------
-BASE_DIR = r"C:\Users\apeks\OneDrive\Desktop\Apeksha Desktop\College\SBI-Internship\KYC\ML_model"
+BASE_DIR = r"C:\Users\apeks\OneDrive\Desktop\Apeksha Desktop\College\SBI-Internship\KYC\Main_project"
 
 dataset_path = os.path.join(BASE_DIR, "dataset")                 # contains aadhaar/ and pan/
 augmented_path = os.path.join(BASE_DIR, "augmented_dataset")     # contains augmented aadhaar/

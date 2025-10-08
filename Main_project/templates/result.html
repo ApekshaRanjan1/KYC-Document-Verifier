@@ -1,46 +1,109 @@
-{% extends "navbase.html" %}
-
+{% extends "navbase.html" %} 
 {% block content %}
-<div class="glass-card" style="margin-top: 8rem;">
-  <h1 class="page-title">💫 Prediction Result</h1>
+<div class="glass-card" style="margin-top: 8rem">
+  <h1 class="page-title">💫 Verification Result</h1>
 
-  <!-- Uploaded Image -->
+  <!-- Image Toggle Section -->
   <div class="result-image-container">
     <div class="image-frame">
-      <img src="{{ url_for('uploaded_file', filename=filename) }}" class="result-image" alt="Uploaded Document">
+      <h4>Document Preview</h4>
+
+      <!-- Toggle Buttons -->
+      <div style="margin-bottom: 1rem;">
+        <button id="originalBtn" class="toggle-btn active">Original</button>
+        <button id="preprocessedBtn" class="toggle-btn">Preprocessed</button>
+      </div>
+
+      <!-- Images -->
+      <img
+        id="originalImage"
+        src="{{ url_for('uploaded_file', filename=filename) }}"
+        class="result-image"
+        alt="Uploaded Document"
+        style="display: block; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);"
+      />
+      <img
+        id="preprocessedImage"
+        src="{{ url_for('preprocessed_file', filename='pre_' + filename) }}"
+        class="result-image"
+        alt="Preprocessed Document"
+        style="display: none; max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);"
+      />
     </div>
   </div>
 
   <!-- Structured Details -->
-  <div class="info-box">
-    <h3>🧾 Extracted Details</h3>
-    <ul>
-      {% if extracted_data.document_type %}
-      <li><strong>Document Type:</strong> {{ extracted_data.document_type }}</li>
-      {% endif %}
-      {% if extracted_data.status %}
-      <li><strong>Status:</strong> {{ extracted_data.status }}</li>
-      {% endif %}
-      {% if extracted_data.name %}
-      <li><strong>Name:</strong> {{ extracted_data.name }}</li>
-      {% endif %}
-      {% if extracted_data.aadhaar_number %}
-      <li><strong>Aadhaar Number:</strong> {{ extracted_data.aadhaar_number }}</li>
-      {% endif %}
-      {% if extracted_data.document_number %}
-      <li><strong>Document Number:</strong> {{ extracted_data.document_number }}</li>
-      {% endif %}
-    </ul>
+  <div class="result-details">
+    <div class="info-box-h3-div">
+      <h3 class="info-box-h3">🧾 Extracted Details</h3>
+    </div>
+    <div class="info-box">
+      <ul>
+        {% if extracted_data.document_type %}
+        <li><strong>Document Type:</strong> {{ extracted_data.document_type }}</li>
+        {% endif %}
+        {% if extracted_data.status %}
+        <li><strong>Status:</strong> {{ extracted_data.status }}</li>
+        {% endif %}
+        {% if extracted_data.name %}
+        <li><strong>Name:</strong> {{ extracted_data.name }}</li>
+        {% endif %}
+        {% if extracted_data.aadhaar_number %}
+        <li><strong>Aadhaar Number:</strong> {{ extracted_data.aadhaar_number }}</li>
+        {% endif %}
+        {% if extracted_data.document_number %}
+        <li><strong>Document Number:</strong> {{ extracted_data.document_number }}</li>
+        {% endif %}
+      </ul>
 
-    <!-- Optional Raw Text -->
-    {% if extracted_text %}
-    <details style="margin-top:15px;">
-      <summary>📄 Show Raw OCR Text</summary>
-      <pre>{{ extracted_text }}</pre>
-    </details>
-    {% endif %}
+      {% if extracted_text %}
+      <details class="ocr-details">
+        <summary>📄 Show Raw OCR Text</summary>
+        <pre class="ocr-text">{{ extracted_text }}</pre>
+      </details>
+      {% endif %}
+    </div>
   </div>
 
   <a href="{{ url_for('index') }}" class="back-btn">← Back to Upload</a>
 </div>
+
+<!-- Toggle Script -->
+<script>
+  const originalBtn = document.getElementById("originalBtn");
+  const preprocessedBtn = document.getElementById("preprocessedBtn");
+  const originalImage = document.getElementById("originalImage");
+  const preprocessedImage = document.getElementById("preprocessedImage");
+
+  originalBtn.addEventListener("click", () => {
+    originalImage.style.display = "block";
+    preprocessedImage.style.display = "none";
+    originalBtn.classList.add("active");
+    preprocessedBtn.classList.remove("active");
+  });
+
+  preprocessedBtn.addEventListener("click", () => {
+    originalImage.style.display = "none";
+    preprocessedImage.style.display = "block";
+    preprocessedBtn.classList.add("active");
+    originalBtn.classList.remove("active");
+  });
+</script>
+
+<!-- Toggle Button Styles -->
+<style>
+.toggle-btn {
+  background: #1565c0;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 25px;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.7rem;
+}
+.toggle-btn:hover { background: #0d47a1; transform: scale(1.05); }
+.toggle-btn.active { background: #0d47a1; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+</style>
 {% endblock %}

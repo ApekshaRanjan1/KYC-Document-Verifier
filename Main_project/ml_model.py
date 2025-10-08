@@ -5,7 +5,7 @@ from PIL import Image
 # ----------------------------
 # Load OCR + TF-IDF Model
 # ----------------------------
-MODEL_PATH = r"C:\Users\apeks\OneDrive\Desktop\Apeksha Desktop\College\SBI-Internship\KYC\ML_model\model\ocr_model.pkl"
+MODEL_PATH = r"C:\Users\apeks\OneDrive\Desktop\Apeksha Desktop\College\SBI-Internship\KYC\Main_project\model\ocr_model.pkl"
 
 with open(MODEL_PATH, "rb") as f:
     vectorizer, clf_text = pickle.load(f)

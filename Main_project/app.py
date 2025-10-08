@@ -6,6 +6,9 @@ from regex_ex import extract_details
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 ALLOWED_EXT = {"png", "jpg", "jpeg"}
+PREPROCESS_FOLDER = os.path.join(os.path.dirname(__file__), "preprocessed")
+os.makedirs(PREPROCESS_FOLDER, exist_ok=True)
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -41,7 +44,9 @@ def scan():
         file.save(filepath)
 
         prediction, extracted_text = predict_document_type(filepath)
-        extracted_data = extract_details(filepath, extracted_text, prediction)
+        preprocessed_filename = "pre_" + filename
+        preprocessed_filepath = os.path.join(PREPROCESS_FOLDER, preprocessed_filename)
+        extracted_data = extract_details(filepath, extracted_text, prediction, save_processed_path=preprocessed_filepath)
 
         return jsonify({
             "filename": filename,
@@ -51,6 +56,10 @@ def scan():
         })
 
     return jsonify({"error": "Invalid file"}), 400
+
+@app.route("/preprocessed/<filename>")
+def preprocessed_file(filename):
+    return send_from_directory(PREPROCESS_FOLDER, filename)
 
 #result page
 @app.route("/result/<filename>")
